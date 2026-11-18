@@ -416,3 +416,45 @@ flowchart TD
     A --> L[Ilustración biológica en BioRender]
     K --> M[Documentación final]
     L --> M
+
+---
+## 16. Requisitos para reproducir la práctica
+
+### Programas y recursos necesarios
+
+- MATLAB y Simulink.
+- Simscape y los componentes eléctricos requeridos por el circuito.
+- Las herramientas de ajuste de controladores necesarias para abrir y utilizar PID Tuner.
+- Python y las bibliotecas que se importen en la versión definitiva del programa.
+- BioRender o, en su defecto, la imagen exportada del diagrama biológico.
+
+### Pasos de ejecución
+
+1. Obtener los materiales que integran el repositorio.
+2. Colocar el modelo de Simulink (`.slx`) y el cuaderno de MATLAB (`.mlx`) dentro de la misma carpeta de trabajo.
+3. Abrir el cuaderno y comprobar los datos definidos para la simulación.
+4. Revisar que los parámetros de control y caso coincidan con los valores presentados en este documento.
+5. Confirmar qué conjunto de ganancias PI se utilizará en la reproducción.
+6. Ejecutar el cuaderno. Durante este proceso se abrirá el modelo de Simulink y se realizará una simulación de 10 s con el solucionador `ode15s` y un paso máximo de $10^{-3}$ s. Cuando el cuaderno solicite el modelo, indicar el nombre base correspondiente al archivo `.slx` disponible.
+7. Comprobar que se hayan generado las variables `X.t`, `X.F`, `X.Fsx`, `X.Fsy` y `X.PID`.
+8. Crear la gráfica con la función `plotsignals` y exportarla como documento PDF.
+9. Ejecutar el programa de Python con el mismo pulso, los mismos parámetros y las ganancias PI seleccionadas. Guardar la figura producida.
+10. Comparar las gráficas de ambas plataformas y añadir al repositorio la ilustración de BioRender y las evidencias restantes.
+
+
+---
+
+## 17. Fuentes consultadas
+
+Las siguientes referencias corresponden al material bibliográfico señalado en el instructivo de la práctica:
+
+1. M. C. Khoo, *Physiological Control Systems: Analysis, Simulation, and Estimation*, 2nd ed., IEEE Press, 2018.
+2. F. C. Hoppensteadt y C. S. Peskin, *Modeling and Simulation in Medicine and the Life Sciences*, Springer.
+3. J. E. Hall, *Guyton and Hall Textbook of Medical Physiology*, 14th ed., Elsevier, 2021.
+4. K. Ogata, *Ingeniería de Control Moderna*, 5.ª ed., Pearson Educación, 2010.
+5. N. S. Nise, *Control Systems Engineering*, 8th ed., John Wiley & Sons, 2020.
+6. P. A. Valle, *Syllabus para Modelado de Sistemas Fisiológicos*, Tecnológico Nacional de México / Instituto Tecnológico de Tijuana, Tijuana, B. C., México, 2026. Sección 5.5: «Práctica: Modelado y control del sistema musculoesquelético».
+7. Tecnológico Nacional de México, *Programa de estudio de la asignatura Modelado de Sistemas Fisiológicos, IBF-1020*.
+
+
+---
