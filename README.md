@@ -90,7 +90,7 @@ La práctica integra conocimientos de modelado matemático, análisis de sistema
 | Modelado matemático | Representación del sistema endocrino mediante un circuito eléctrico RLC de segundo orden. |
 | Análisis matemático | Deducción de ecuaciones integro-diferenciales, EDO, función de transferencia, polos y error estacionario. |
 | Sistemas fisiológicos | Interpretación de la secreción glandular, difusión sanguínea, almacenamiento tisular y respuesta del órgano diana. |
-| MATLAB y Simulink | Simulación multicominio (Simscape, bloques de transferencia, EID) y sintonización del controlador PID. |
+| MATLAB y Simulink | Simulación multidominio (Simscape, bloques de transferencia, EID) y sintonización del controlador PID. |
 | Python | Desarrollo de una implementación computacional alternativa para verificación numérica. |
 | Análisis de resultados | Comparación e interpretación de las respuestas transitorias y estacionarias en lazo abierto y cerrado. |
 
@@ -139,6 +139,8 @@ El circuito se organiza en dos mallas acopladas en el nodo de salida $V_s(t)$:
 
 Entre la condición de control y el caso de estudio, la resistencia del órgano diana $R_2$ disminuye cien veces (de $100\text{ k}\Omega$ a $1\text{ k}\Omega$) y la capacitancia de almacenamiento $C$ aumenta mil veces (de $1\ \mu\text{F}$ a $1000\ \mu\text{F}$). Fisiológicamente, esto refleja una menor efectividad sostenida en el tejido blanco acompañada de un secuestro o acumulación excesiva en compartimentos intermedios, lo que reduce la amplitud de respuesta hormonal y vuelve considerablemente más lenta su estabilización.
 
+[Volver al contenido](#contenido)
+
 ---
 
 ## 6. Análisis matemático
@@ -147,55 +149,37 @@ Entre la condición de control y el caso de estudio, la resistencia del órgano 
 
 Aplicando la ley de voltajes de Kirchhoff (LVK) en la malla principal se obtiene la expresión para el flujo de secreción hormonal:
 
-$$
-V_e(t) = R_1 F_e(t) + V_s(t) \implies F_e(t) = \frac{V_e(t) - V_s(t)}{R_1}.
-$$
+$$V_e(t) = R_1 F_e(t) + V_s(t) \implies F_e(t) = \frac{V_e(t) - V_s(t)}{R_1}.$$
 
 Aplicando la ley de corrientes de Kirchhoff (LCK) en el nodo $V_s(t)$:
 
-$$
-F_e(t) = F_s(t) + F_c(t), \qquad \text{donde } F_c(t) = C\frac{dV_s(t)}{dt}.
-$$
+$$F_e(t) = F_s(t) + F_c(t), \qquad \text{donde } F_c(t) = C\frac{dV_s(t)}{dt}.$$
 
 Por su parte, la caída de voltaje en la rama del órgano diana ($R_2\text{--}L$) está dada por:
 
-$$
-V_s(t) = V_{R_2}(t) + V_L(t) = R_2 F_s(t) + L\frac{dF_s(t)}{dt}.
-$$
+$$V_s(t) = V_{R_2}(t) + V_L(t) = R_2 F_s(t) + L\frac{dF_s(t)}{dt}.$$
 
 ### Sistema de ecuaciones integro-diferenciales (EID)
 
 Despejando las variables de flujo y voltaje en forma integral y diferencial se obtiene el sistema implementado en los subsistemas `Fs(t)_EID` de Simulink:
 
-$$
-\begin{aligned}
-V_s(t) &= \frac{1}{C}\int \left[F_e(t) - F_s(t)\right] dt, \\[6pt]
-F_e(t) &= \frac{1}{R_1}\left(V_e(t) - \frac{1}{C}\int \left[F_e(t) - F_s(t)\right] dt\right), \\[6pt]
-F_s(t) &= \frac{1}{R_2}\left(\frac{1}{C}\int \left[F_e(t) - F_s(t)\right] dt - L\frac{dF_s(t)}{dt}\right).
-\end{aligned}
-$$
+$$\begin{aligned} V_s(t) &= \frac{1}{C}\int \left[F_e(t) - F_s(t)\right] dt, \\ F_e(t) &= \frac{1}{R_1}\left(V_e(t) - \frac{1}{C}\int \left[F_e(t) - F_s(t)\right] dt\right), \\ F_s(t) &= \frac{1}{R_2}\left(\frac{1}{C}\int \left[F_e(t) - F_s(t)\right] dt - L\frac{dF_s(t)}{dt}\right). \end{aligned}$$
 
 ### Ecuación diferencial ordinaria de segundo orden
 
 Sustituyendo $F_s(t) = \dfrac{V_e(t) - V_s(t)}{R_1} - C\dfrac{dV_s(t)}{dt}$ y su derivada respecto al tiempo dentro de la ecuación de la rama $R_2\text{--}L$, y multiplicando ambos miembros por $R_1$, se llega a la ecuación diferencial de segundo orden del sistema:
 
-$$
-R_1 L C \frac{d^2 V_s(t)}{dt^2} + (R_1 R_2 C + L)\frac{dV_s(t)}{dt} + (R_1 + R_2)V_s(t) = L\frac{dV_e(t)}{dt} + R_2 V_e(t).
-$$
+$$R_1 L C \frac{d^2 V_s(t)}{dt^2} + (R_1 R_2 C + L)\frac{dV_s(t)}{dt} + (R_1 + R_2)V_s(t) = L\frac{dV_e(t)}{dt} + R_2 V_e(t).$$
 
 ### Función de transferencia resultante
 
 Aplicando la transformada de Laplace con condiciones iniciales nulas:
 
-$$
-\left[R_1 L C s^2 + (R_1 R_2 C + L)s + (R_1 + R_2)\right]V_s(s) = (Ls + R_2)V_e(s),
-$$
+$$\left[R_1 L C s^2 + (R_1 R_2 C + L)s + (R_1 + R_2)\right]V_s(s) = (Ls + R_2)V_e(s),$$
 
 de donde se obtiene la función de transferencia general:
 
-$$
-\boxed{G(s) = \frac{V_s(s)}{V_e(s)} = \frac{Ls + R_2}{R_1 L C s^2 + (R_1 R_2 C + L)s + (R_1 + R_2)}.}
-$$
+$$\boxed{G(s) = \frac{V_s(s)}{V_e(s)} = \frac{Ls + R_2}{R_1 L C s^2 + (R_1 R_2 C + L)s + (R_1 + R_2)}.}$$
 
 Al sustituir los valores de cada escenario se obtienen las siguientes expresiones (en forma directa de circuito y en forma mónica normalizada):
 
@@ -210,15 +194,11 @@ Al sustituir los valores de cada escenario se obtienen las siguientes expresione
 
 El error estacionario $e(t) = V_e(t) - V_s(t)$ se evaluó ante una entrada **escalón unitario** $V_e(s) = \dfrac{1}{s}$ aplicando el teorema del valor final:
 
-$$
-e_{ss} = \lim_{s\to 0} s\,E(s) = \lim_{s\to 0} s\,\frac{1}{s}\left[1 - G(s)\right] = 1 - G(0).
-$$
+$$e_{ss} = \lim_{s\to 0} s\,E(s) = \lim_{s\to 0} s\,\frac{1}{s}\left[1 - G(s)\right] = 1 - G(0).$$
 
 Evaluando la ganancia estática $G(0) = \dfrac{R_2}{R_1 + R_2}$, el error en estado estacionario queda expresado como:
 
-$$
-\boxed{e_{ss} = 1 - \frac{R_2}{R_1 + R_2} = \frac{R_1}{R_1 + R_2}.}
-$$
+$$\boxed{e_{ss} = 1 - \frac{R_2}{R_1 + R_2} = \frac{R_1}{R_1 + R_2}.}$$
 
 | Condición | Ganancia estática $G(0)$ | Error en estado estable $e_{ss}$ | Error porcentual |
 |---|---:|---:|---:|
@@ -233,9 +213,7 @@ En el individuo sano (control), la respuesta hormonal efectiva alcanza práctica
 
 Para determinar la estabilidad en lazo abierto se calculan las raíces del polinomio característico:
 
-$$
-R_1 L C s^2 + (R_1 R_2 C + L)s + (R_1 + R_2) = 0.
-$$
+$$R_1 L C s^2 + (R_1 R_2 C + L)s + (R_1 + R_2) = 0.$$
 
 | Condición | Polo rápido $\lambda_1$ | Polo dominante $\lambda_2$ | Frecuencia natural $\omega_n$ | Factor de amortiguamiento $\zeta$ | Estabilidad |
 |---|---:|---:|---:|---:|---|
@@ -261,9 +239,7 @@ Los circuitos en Simscape emplean una fuente de voltaje controlada (`Controlled 
 
 La excitación del sistema consiste en un bloque `Step` que genera un **escalón unitario** aplicado en $t = 1\text{ s}$:
 
-$$
-V_e(t) = u(t - 1).
-$$
+$$V_e(t) = u(t - 1).$$
 
 | Configuración | Valor |
 |---|---:|
@@ -305,21 +281,15 @@ Para eliminar el error estacionario del $50\%$ en el escenario patológico y log
 
 La señal de error se define a partir de la respuesta de referencia del control:
 
-$$
-e(t) = V_{s,control}(t) - V_{s,PID}(t).
-$$
+$$e(t) = V_{s,control}(t) - V_{s,PID}(t).$$
 
 La función de transferencia del controlador PID con filtro derivativo es:
 
-$$
-K(s) = k_P + \frac{k_I}{s} + k_D\frac{Ns}{s + N}.
-$$
+$$K(s) = k_P + \frac{k_I}{s} + k_D\frac{Ns}{s + N}.$$
 
 De esta manera, la función de transferencia de seguimiento en lazo cerrado $T(s)$ y la salida controlada $V_{s,PID}(s)$ se expresan como:
 
-$$
-T(s) = \frac{K(s)G_{caso}(s)}{1 + K(s)G_{caso}(s)}, \qquad V_{s,PID}(s) = T(s)G_{control}(s)V_e(s).
-$$
+$$T(s) = \frac{K(s)G_{caso}(s)}{1 + K(s)G_{caso}(s)}, \qquad V_{s,PID}(s) = T(s)G_{control}(s)V_e(s).$$
 
 ### Ganancias configuradas en el controlador PID
 
@@ -354,7 +324,7 @@ El programa correspondiente es:
 
 **`Practica_4.py`**
 
-El documento **`Caso_python.pdf`** contiene el respaldo gráfico y documental de esta implementación.
+El documento **`Sistema Endocrino python.pdf`** contiene la representación gráfica y el respaldo documental de esta implementación.
 
 ### Actividades realizadas
 
@@ -369,7 +339,7 @@ El documento **`Caso_python.pdf`** contiene el respaldo gráfico y documental de
 
 La siguiente ilustración, elaborada en BioRender, esquematiza el eje endocrino estudiado (glándula secretora, torrente sanguíneo, compartimento de almacenamiento y órgano diana) junto con su analogía en el circuito eléctrico RLC de segundo orden.
 
-![Representación del sistema endocrino y su modelo RLC](BioRenderEndocrino.png)
+![Representación del sistema endocrino y su modelo RLC](Biorender_SistemaEndocrino.png)
 
 **Figura 1.** Representación fisiológica del sistema endocrino y su circuito eléctrico RLC equivalente. Elaboración propia mediante BioRender.
 
@@ -416,5 +386,41 @@ flowchart TD
     A --> L[Ilustración biológica en BioRender]
     K --> M[Documentación final]
     L --> M
+```
 
+---
 
+## 16. Requisitos para reproducir la práctica
+
+### Programas y recursos necesarios
+
+- MATLAB y Simulink (con *Control System Toolbox* para el bloque PID y *Simscape Electrical* para los circuitos equivalentes).
+- Python 3 con las bibliotecas científicas utilizadas en el script (`numpy`, `scipy`, `matplotlib`, `control`).
+- BioRender o el archivo de imagen exportado del diagrama fisiológico (`Biorender_SistemaEndocrino.png`).
+
+### Pasos de ejecución
+
+1. Descargar o clonar los archivos del repositorio `MSFP4`.
+2. Ubicar el modelo de Simulink (`Practica4.slx`) y el cuaderno de MATLAB (`Macias23212212.mlx`) en el mismo directorio de trabajo.
+3. Verificar que los parámetros de `Control` ($R_1=1\text{ k}\Omega$, $L=100\text{ mH}$, $R_2=100\text{ k}\Omega$, $C=1\ \mu\text{F}$), `Caso` ($R_1=1\text{ k}\Omega$, $L=100\text{ mH}$, $R_2=1\text{ k}\Omega$, $C=1000\ \mu\text{F}$) y del bloque `PID Controller1` coincidan con los reportados en este documento.
+4. Ejecutar el cuaderno `Macias23212212.mlx` para correr `Practica4.slx` durante $10\text{ s}$ con el solucionador `ode15s` y paso máximo de $10^{-2}\text{ s}$.
+5. Comprobar la generación de las variables `Ve`, `Control`, `Caso` y `PID` en el espacio de trabajo y exportar las gráficas y el cuaderno a `Macias23212212.pdf`.
+6. Ejecutar el script `Practica_4.py` bajo las mismas condiciones de entrada ($u(t-1)$) y ganancias PID para contrastar las curvas obtenidas en ambos entornos (`Sistema Endocrino python.pdf`).
+
+---
+
+## 17. Fuentes consultadas
+
+Las siguientes referencias corresponden al material bibliográfico señalado en el instructivo de la práctica:
+
+1. M. C. Khoo, *Physiological Control Systems: Analysis, Simulation, and Estimation*, 2nd ed., IEEE Press, 2018.
+2. F. C. Hoppensteadt y C. S. Peskin, *Modeling and Simulation in Medicine and the Life Sciences*, Springer.
+3. J. E. Hall, *Guyton and Hall Textbook of Medical Physiology*, 14th ed., Elsevier, 2021.
+4. K. Ogata, *Ingeniería de Control Moderna*, 5.ª ed., Pearson Educación, 2010.
+5. N. S. Nise, *Control Systems Engineering*, 8th ed., John Wiley & Sons, 2020.
+6. P. A. Valle, *Syllabus para Modelado de Sistemas Fisiológicos*, Tecnológico Nacional de México / Instituto Tecnológico de Tijuana, Tijuana, B. C., México, 2026. Sección 5.5: «Práctica: Sistema endócrino».
+7. Tecnológico Nacional de México, *Programa de estudio de la asignatura Modelado de Sistemas Fisiológicos, IBF-1020*.
+
+---
+
+## Uso académico
