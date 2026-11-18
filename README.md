@@ -423,4 +423,4 @@ Las siguientes referencias corresponden al material bibliográfico señalado en 
 
 ## Uso académico
 
-Este repositorio contiene la documentación de la **Práctica 4** de la asignatura Modelado de Sistemas Fisiológicos. El material integra el desarrollo matemático, la simulación del circuito eléctrico equivalente, la comparación de las condiciones de control y caso, y la evaluación de un controlador PI mediante herramientas computacionales.
+Este repositorio contiene la documentación de la **Práctica 4** de la asignatura Modelado de Sistemas Fisiológicos. El material integra el desarrollo matemático, la simulación del circuito eléctrico equivalente, la comparación de las condiciones de control y caso, y la evaluación de un controlador PID mediante herramientas computacionales.
