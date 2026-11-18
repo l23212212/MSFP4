@@ -139,8 +139,6 @@ El circuito se organiza en dos mallas acopladas en el nodo de salida $V_s(t)$:
 
 Entre la condición de control y el caso de estudio, la resistencia del órgano diana $R_2$ disminuye cien veces (de $100\text{ k}\Omega$ a $1\text{ k}\Omega$) y la capacitancia de almacenamiento $C$ aumenta mil veces (de $1\ \mu\text{F}$ a $1000\ \mu\text{F}$). Fisiológicamente, esto refleja una menor efectividad sostenida en el tejido blanco acompañada de un secuestro o acumulación excesiva en compartimentos intermedios, lo que reduce la amplitud de respuesta hormonal y vuelve considerablemente más lenta su estabilización.
 
-[Volver al contenido](#contenido)
-
 ---
 
 ## 6. Análisis matemático
@@ -424,3 +422,5 @@ Las siguientes referencias corresponden al material bibliográfico señalado en 
 ---
 
 ## Uso académico
+
+Este repositorio contiene la documentación de la **Práctica 4** de la asignatura Modelado de Sistemas Fisiológicos. El material integra el desarrollo matemático, la simulación del circuito eléctrico equivalente, la comparación de las condiciones de control y caso, y la evaluación de un controlador PI mediante herramientas computacionales.
